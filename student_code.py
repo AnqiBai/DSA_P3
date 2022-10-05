@@ -17,7 +17,8 @@ class RoutePlanner():
     def get_distance(self, node1, node2):
         x1, y1 = self.M.intersections[node1]
         x2, y2 = self.M.intersections[node2]
-        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        # return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        return abs(x1 - x2) + abs(y1 - y2)
 
     def get_h_value(self, node):
         return self.get_distance(node, self.goal)
