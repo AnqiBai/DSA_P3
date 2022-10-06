@@ -17,8 +17,17 @@ class RoutePlanner():
     def get_distance(self, node1, node2):
         x1, y1 = self.M.intersections[node1]
         x2, y2 = self.M.intersections[node2]
-        # return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-        return abs(x1 - x2) + abs(y1 - y2)
+        # return math.sqrt((x1 - x2)**2 + (y1 - y2)**2) # Euclidean distance
+        '''
+        Discussion regarding heuristic functions:
+        Reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#S7
+        Use the distance heuristic that matches the allowed movement:
+        1. On a square grid that allows 4 directions of movement, use Manhattan distance (L1).
+        2. On a square grid that allows 8 directions of movement, use Diagonal distance (L∞).
+        3. On a square grid that allows any direction of movement, we can Euclidean distance (L2). 
+        4. On a hexagon grid that allows 6 directions of movement, use Manhattan distance adapted to hexagonal grids.
+        '''
+        return abs(x1 - x2) + abs(y1 - y2)  # Manhattan distance
 
     def get_h_value(self, node):
         return self.get_distance(node, self.goal)
@@ -54,7 +63,8 @@ class RoutePlanner():
                     self.get_distance(current_node, nei)
                 if nei not in cost_so_far or new_cost < cost_so_far[nei]:
                     cost_so_far[nei] = new_cost
-                    heapq.heappush(self.frontier, (new_cost, nei))
+                    heapq.heappush(self.frontier, (new_cost +
+                                                   self.get_h_value(nei), nei))
                     self.came_from[nei] = current_node
 
         return self.construct_final_path(self.goal)
